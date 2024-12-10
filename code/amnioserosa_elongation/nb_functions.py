@@ -26,9 +26,14 @@ def cutoff_and_knn(points, cutoff, k):
     """
     Find all up to k points are are witin a certain distance of each other
     """
-
-    distances, indices = KDTree(points).query(points, k=k)
-
+    try:
+        tree = KDTree(points)
+        distances, indices = tree.query(points, k=k)
+    except:
+        print("Error in KDTree")
+        print(points)
+        return
+    
     inds = []
     for i in range(len(points)):
         inds.append(indices[i][distances[i] < cutoff])
