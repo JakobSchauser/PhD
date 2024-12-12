@@ -6,14 +6,14 @@ import matplotlib.pyplot as plt
 # use('PyQt5') 
 
 def make_voronoi_plot(all_poss, ax = None, elongated_cells = None, ps = None, qs = None):
-    assert all_poss.shape[2] == 2, "Only 2D data is supported"
+    assert all_poss.shape[1] == 2, "Only 2D data is supported"
 
     if elongated_cells is None:
         elongated_cells = np.zeros(all_poss.shape[0])
 
     if ax is None:
-        fig, ax = plt.subplots()
-
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
 
     vor = Voronoi(all_poss)
 
