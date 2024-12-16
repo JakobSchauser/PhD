@@ -1,0 +1,2 @@
+The "planning" website we are forced to use for our PhD's at UCPH does not allow attaching images but inexplicably allow .exe-files to be uploaded.
+So planned_courses.exe is simply an executable that displays an image. I am complying.
