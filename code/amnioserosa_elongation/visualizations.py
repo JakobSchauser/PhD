@@ -30,8 +30,8 @@ def make_voronoi_plot(all_poss, ax = None, elongated_cells = None, ps = None, qs
         ax.quiver(all_poss[:, 0], all_poss[:, 1], qs[:, 0], qs[:, 1], color='red')
 
     ax.set_aspect('equal')
-    ax.set_xlim(-10, 10)
-    ax.set_ylim(-10, 10)
+    ax.set_xlim(-15, 15)
+    ax.set_ylim(-15, 15)
 
     return ax
 
