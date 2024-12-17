@@ -27,11 +27,11 @@ Okay!
 
 It seems like my dream of adding somewthing worthwile to the model is inching closer.
 
-The added "elongation factor" works like a charm when added to the potential and minimized ($\frac{dV}{de})$ alongside the rest of the parameters (r, p, q)
+The added "elongation factor" works like a charm when added to the potential and minimized $(\frac{dV}{de})$ alongside the rest of the parameters (r, p, q)
 
 For a slowly squeezing (in the y-axis) potential, the cells behave like this: 
 
-![alt text](first_working_passive_elongation.png "First fix of PhD")
+![alt text](first_working_passive_elongation.png "alt text")
 
 As a
 
@@ -39,12 +39,21 @@ Why works
 
 Next step w lambda2 
 
-Also works!
+Okay, a lot happens today - that also works!
 
-![alt text](with_lambda2.png "First fix of PhD")
+![alt text](with_lambda2.png "alt text")
 
 
 Trying with no, does not automatically make them align (even tried making the dot product into something tanh-like) 
 
+(it makes rosettes)
 
+![alt text](frustreated_when_no_l2.png "Frustrated")
+
+
+Wait a minute it orients when elongation is clamped!
+
+![alt text](it_orients_pcp.png "on a roll today")
+
+Now I will try pulling:
 
