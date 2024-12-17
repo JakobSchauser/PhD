@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 # use('PyQt5') 
 
-def make_voronoi_plot(all_poss, ax = None, elongated_cells = None, ps = None, qs = None):
+def make_voronoi_plot(all_poss, ax = None, elongated_cells = None, ps = None, qs = None, lims = 15):
     assert all_poss.shape[1] == 2, "Only 2D data is supported"
 
     if elongated_cells is None:
@@ -30,8 +30,8 @@ def make_voronoi_plot(all_poss, ax = None, elongated_cells = None, ps = None, qs
         ax.quiver(all_poss[:, 0], all_poss[:, 1], qs[:, 0], qs[:, 1], color='red')
 
     ax.set_aspect('equal')
-    ax.set_xlim(-15, 15)
-    ax.set_ylim(-15, 15)
+    ax.set_xlim(-lims, lims)
+    ax.set_ylim(-lims, lims)
 
     return ax
 
