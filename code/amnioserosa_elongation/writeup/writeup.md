@@ -1,7 +1,9 @@
-13/12-2024
-
+10/12-2024
 We have implemented a way of doing elongated cells.
 
+describe
+
+13/12-2024
 It seems that squeezing (i.e. being thinner) is more stable than extending. This can be seen here:
 
 ![alt text](elongation_ratios_vs_Ns.png "First plot of PhD")
@@ -21,14 +23,24 @@ It now works better!
 
 17/12-2024
 
-Okay! New parameters 
+Okay! 
 
+It seems like my dream of adding somewthing worthwile to the model is inching closer.
 
-Image
+The added "elongation factor" works like a charm when added to the potential and minimized ($\frac{dV}{de})$ alongside the rest of the parameters (r, p, q)
 
-Formula/potential
+For a slowly squeezing (in the y-axis) potential, the cells behave like this: 
+
+![alt text](first_working_passive_elongation.png "First fix of PhD")
+
+As a
 
 Why works
 
-Next step
+Next step w lambda2 
+
+Also works!
+![alt text](with_lambda2.png "First fix of PhD")
+
+
 
