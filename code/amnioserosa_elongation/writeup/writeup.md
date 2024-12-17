@@ -40,7 +40,11 @@ Why works
 Next step w lambda2 
 
 Also works!
+
 ![alt text](with_lambda2.png "First fix of PhD")
+
+
+Trying with no, does not automatically make them align (even tried making the dot product into something tanh-like) 
 
 
 
