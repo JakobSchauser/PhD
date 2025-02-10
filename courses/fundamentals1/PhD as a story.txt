@@ -1,0 +1,38 @@
+
+Understanding the vocabulary of the individual cell allows for perturbations
+
+Spatial (re)programming 
+
+Wound healing, organ development
+
+Local rules leads to global emergent phenomena - sometimes changes __ the system unintuitively.
+
+Understanding how different patterning organizes morphogenesis, 
+
+Small off-equilibrium leads to large-scale structure.
+We want to harness, or at least start to understand.
+
+Examples: Snowflakes, organoids(?)
+
+BC
+
+_____________________
+
+
+Spatiality matters. 
+
+All phenomena can be thought of as list of rules and corresponding boundary conditions:
+If we know how gravity pulls on a ball and where it started, we can calculate its trajectory.
+
+Local rules leads to global emergent phenomena - but as we know from chaos theory, sometimes the system reacts unintuitively to changes.
+
+In nature, mind-bogglingly complex, emergent shapes, that seem to stem from relatively simple parts. 
+Small-scale symmetry breaks in chemical nonequilibria leads to large-scale structure.
+
+Our hypothesis is, that if we understand the vocabulary of the individual cell (its rules) we can change their by perturbing the initial conditions. 
+This is what we call spatial (re)programming.
+
+Right now, a lot of work are put into growing artificial organs as "replacement parts". A reoccurring problem is, that, without us truly understanding why.
+
+
+
