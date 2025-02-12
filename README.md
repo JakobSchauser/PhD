@@ -18,6 +18,7 @@ For scientists dreaming big, growing artificial organs as "replacement parts" wi
 
 
 Our hypothesis is, that if we understand the vocabulary of the individual cell (its rules) we can take that out of the equation, and change biological outcomes by smartly perturbing the initial conditions. 
+
 This is what we call spatial (re)programming.
 
 **About me**
