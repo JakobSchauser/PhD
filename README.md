@@ -6,8 +6,20 @@ Investigating Spatial Algorithms for Morphogenetic Patterning in Biological and 
 
 **Short description**
 
-Morphogenetic patterning is a fundamental process underlying the emergent organization of biological tissues and the emergence of complex structures in both natural and synthetic systems. My research will investigate spatial algorithms that govern such patterning, focusing on their applications in both biological and artificial contexts. Using experimental data of early embryonic development, neural cellular automata (NCAs) and theoretical modelling, I will be looking for parallels between artificial and biological patterning mechanisms and self-organizing processes. Through the lenses of physics, my research (loftily) aspires to catalyze a interdisciplinary exploration between biology and computation, fostering innovation, and furthering explainability in both scientific domains.
+
+All phenomena can be thought of as list of rules and corresponding boundary conditions:
+If we know how gravity pulls on a ball and where it started, we can calculate its trajectory. Local rules lead to global emergent phenomena - but as we know from chaos theory, sometimes a system reacts unintuitively to change.
+
+Our work will be looking at the inherently interesting subject of morphogenesis, that is, the origin of physical shape. In nature, mind-bogglingly complex shapes, stem from relatively simple parts – no single cell knows the grand plan, but in collaboration, they can form almost anything.
+
+A lot of work has been put into understanding how different patterning organize morphogenesis. Small-scale symmetry breaks in (chemical nonequilibria) leads to large-scale, emergent structure. Some of this interaction is understood, but as everything happens through self-organization, tracing the path of information has been elusive.
+
+For scientists dreaming big, growing artificial organs as "replacement parts" will revolutionize the health-care industry. A reoccurring problem is that, without us truly understanding why, cells behave wildly different in-vitro (in a lab) compared to in-vivo (in the body). Their environment matter, but figuring out how these boundary conditions affect the cells (i.e. solving the inverse problem) is highly non-trivial. 
+
+
+Our hypothesis is, that if we understand the vocabulary of the individual cell (its rules) we can take that out of the equation, and change biological outcomes by smartly perturbing the initial conditions. 
+This is what we call spatial (re)programming.
 
 **About me**
 
-By unifying the different insights and approaches from biology, physics and computer science, my research aims to bridge the gap between experimentation and modelling, uncovering novel principles with broad applicability.
+By unifying the different insights and approaches from biology, physics and computer science, my research aims to bridge the gap between experimentation and modeling, uncovering novel principles with broad applicability.
