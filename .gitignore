@@ -1,2 +1,5 @@
 *.npy
 .ipynb_checkpoints
+
+/bureaucracy/bsc_and_msc.pdf
+
