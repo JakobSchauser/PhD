@@ -19,14 +19,15 @@ from scripts.layers import CustomGraphConv
 
 
 class CustomGNN(torch.nn.Module):
-    def __init__(self, input_dims, hidden_dims, output_dims):
+    def __init__(self, input_dims, hidden_dims, output_dims,  biases : bool,aggregation = "add",):
         super(CustomGNN, self).__init__()
         # check if list
         if type(hidden_dims) is not list:
             hidden_dims = [hidden_dims]
         
+
         # convolutional layer
-        self.input_layer = CustomGraphConv(input_dims, hidden_dims[0])
+        self.input_layer = CustomGraphConv(input_dims*2, hidden_dims[0], aggr=aggregation)
 
         self.hidden_layers = torch.nn.ModuleList()
         # Linear layers
@@ -34,15 +35,13 @@ class CustomGNN(torch.nn.Module):
             _in = hidden_dims[i]
             _out = hidden_dims[i+1]
 
-            self.hidden_layers.append(Linear(_in, _out))
+            self.hidden_layers.append(Linear(_in, _out, bias = biases))
             # self.hidden_layers.append(CustomGatedPolynomial(_in, _out))
 
 
-        self.output_layer = Linear(hidden_dims[-1], output_dims)
+        self.output_layer = Linear(hidden_dims[-1], output_dims, bias = True)
 
-        no_img_sqrt = lambda x: torch.sqrt(torch.abs(x))
 
-        self.possible_functions = [lambda x: x, no_img_sqrt, torch.square, torch.exp]*2
 
     def forward(self, feature_data, edge_info, edge_weights):
 
@@ -51,37 +50,28 @@ class CustomGNN(torch.nn.Module):
         x = F.relu(x)
 
 
-        # Second GCN layer
-        
-
         for layer in self.hidden_layers:
-            # for i, (f, xx) in enumerate(zip(self.possible_functions, x.T)):
-            #     assert not torch.isnan(f(xx)).any(), f"Function {i} produced NaNs!"
-
-            # for each output feature apply a function
-            # x =  torch.cat([f(xx).unsqueeze(0) for f, xx in zip(self.possible_functions, x.T)]).T
-            # x = F.relu(x)
-            
-            # square
-            # C = 100.
-            # x = torch.clamp(x, -C, C)  # Choose C ~1-10 to prevent extreme values
-
-            # lower_half = x[:, :x.shape[1]//2]
-            # upper_half = x[:, x.shape[1]//2:]
-
-            # x = torch.cat([lower_half, F.softplus(upper_half)], dim=1)
-
             x = layer(x)
-            x = F.softplus(x)
-            
+            x = F.relu(x)            
 
         x = self.output_layer(x, )
-        # x = self.layer3(x, edge_info, edge_weights)
-        # x = torch.tanh(x)
         
         return x
-    
 
+    def forward_verbose(self, feature_data, edge_info, edge_weights):
+        # First Graph Convolutional layer (message passing)
+        x = self.input_layer(feature_data, edge_info, edge_weights)
+        x = F.relu(x)
+
+        out1 = x.clone()
+
+        for layer in self.hidden_layers:
+            x = layer(x)
+            x = F.relu(x)
+
+        x = self.output_layer(x, )
+
+        return x, out1
     
     def get_weights(self):
         weights = []

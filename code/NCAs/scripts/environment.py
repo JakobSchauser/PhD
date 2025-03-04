@@ -19,7 +19,7 @@ from scripts.nb_functions import find_filtered_voronoi_neighbor_knn_limited_mask
 
 
 class Environment():
-    def __init__(self, data, positions):
+    def __init__(self, data, positions, lr : float, weight_gain : float, stepsize : int, iterative_training : bool, ):
         # load the data
 
         self.positions = positions
@@ -44,23 +44,28 @@ class Environment():
 
         self.early_stop_count = 0
 
-        
+        self.lr = lr
+        self.weight_gain = weight_gain
+        self.stepsize = stepsize
+        self.iterative_training = iterative_training
+
+
+    def loss_addition(self):
+        if self.weight_gain == 0.:
+            return 0.
+    
+        l1_weights = torch.stack([wh.abs().sqrt().sum() for wh in self.model.get_weights()]).mean()
+        return l1_weights*self.weight_gain
+
 
     def loss_fn(self, out, target):
         base_loss = F.mse_loss(out, target)
         
-        l1_weights = torch.stack([wh.abs().sqrt().sum() for wh in self.model.get_weights()]).mean()
 
-        # flatten
+        return base_loss 
 
-        addition = 1e-6*l1_weights
-        # addition = 0.
-
-
-        return base_loss + addition
-    
-
-    def get_edges(self, positions):
+    @staticmethod
+    def get_edges(positions):
 
         # create a graph with 1000 nodes
         # create a KD tree for fast nearest neighbor search
@@ -96,15 +101,22 @@ class Environment():
         # compiled_model = intel_npu_acceleration_library.compile(model, compiler_conf)
         self.model = model
 
-        self.optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+        self.optimizer = torch.optim.Adam(model.parameters(), lr=self.lr)
 
-    def call_model(self, X, edges, edge_weights, border_mask):
-        X = torch.cat((X, border_mask.unsqueeze(1)), dim = 1)
+    def call_own_model(self, X, edges, edge_weights, border_mask):
         
-        return self.model(X, edges, edge_weights)
+        return self.call_model(self.model, X, edges, edge_weights, border_mask)
 
 
-    
+    @staticmethod
+    def call_model(model, X, edges, edge_weights, border_mask):
+            # print(X.shape, edges.shape, edge_weights.shape, border_mask.shape)
+            # torch.Size([N_cells]) torch.Size([2, 5982]) torch.Size([5982]) torch.Size([N_cells])
+            X = torch.cat((X, border_mask.unsqueeze(1)), dim = 1)
+
+            
+            return model(X, edges, edge_weights)
+
 
     def check_early_stop(self, avg_loss, test_loss):
         if test_loss < avg_loss:
@@ -134,34 +146,42 @@ class Environment():
                 border_mask = self.border_mask[data_i]
 
 
-                n_steps = 120
-                X = yy[0]
-                self.optimizer.zero_grad()
+                n_steps = int(len(yy)//self.stepsize) - 1
 
-                loss = torch.tensor(0.0)
+                X = torch.zeros_like(yy[0])
 
                 for i in range(n_steps):
+                    self.optimizer.zero_grad()
+                    loss = torch.tensor(0.0)
 
-                    target = yy[(i+1)*5]
+                    target = yy[(i+1)*self.stepsize]
 
                     # X, target = self.transformation(X, target)
 
-                    out = self.call_model(X, edges, edge_weights, border_mask)
+                    # GT_out = self.call_own_model(GT, edges, edge_weights, border_mask)
 
-                    l_loss = self.loss_fn(out, target) 
+                    out = self.call_own_model(X, edges, edge_weights, border_mask)
 
-                    loss += l_loss
+                    l_loss = self.loss_fn(out, target)# + self.loss_fn(GT_out, target)
 
-                    X = out.detach()
+                    loss += l_loss / n_steps
 
-                loss.backward()
+                    # GT = target.detach()
+                    if self.iterative_training:
+                        X = out.detach()
+                    else:
+                        X = target.detach()
 
-                self.optimizer.step()
-                avg_loss += loss.item()
-            
-            avg_loss /= n_steps
+                    loss += self.loss_addition() / n_steps
 
-            avg_loss = avg_loss.item()
+                    loss.backward()
+
+                    self.optimizer.step()
+                    avg_loss += loss.item()
+        
+            avg_loss /= len(self.ys)
+
+            avg_loss = avg_loss.item() * 1000.
 
             if epoch % 5 == 0:
                 print(epoch)

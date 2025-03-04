@@ -40,7 +40,7 @@ class CustomGraphConv(MessagePassing):
 		if isinstance(in_channels, int):
 			in_channels = (in_channels, in_channels)
 
-		self.lin_rel = Linear(in_channels[0]*2, out_channels, bias=bias)
+		self.lin_rel = Linear(in_channels[0], out_channels, bias=bias)
 		# self.lin_rel = Linear(in_channels[0], out_channels, bias=bias)
 		# self.lin_root = Linear(in_channels[1], out_channels, bias=False)
 
@@ -68,12 +68,17 @@ class CustomGraphConv(MessagePassing):
 
 		# add the final feature of the root node
 
+		# print(x_r.shape, msg.shape) torch.Size([1000, 3]) torch.Size([1000, 3])
 
 		
 		msg = torch.cat([x_r, msg], dim=1)
+		# A, B = x_r[:,-1].unsqueeze(1), msg[:,:-1]
+
+		# msg = torch.cat([A,B], dim=1)
 
 
 		out = self.lin_rel(msg)
+		
 		return out
 
 
