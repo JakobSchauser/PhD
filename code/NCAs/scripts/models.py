@@ -26,8 +26,9 @@ class CustomGNN(torch.nn.Module):
             hidden_dims = [hidden_dims]
         
 
+        
         # convolutional layer
-        self.input_layer = CustomGraphConv(input_dims*2, hidden_dims[0], aggr=aggregation)
+        self.input_layer = CustomGraphConv(input_dims*2, hidden_dims[0], aggr=aggregation, bias = biases)
 
         self.hidden_layers = torch.nn.ModuleList()
         # Linear layers
@@ -58,7 +59,9 @@ class CustomGNN(torch.nn.Module):
         
         return x
 
+
     def forward_verbose(self, feature_data, edge_info, edge_weights):
+
         # First Graph Convolutional layer (message passing)
         x = self.input_layer(feature_data, edge_info, edge_weights)
         x = F.relu(x)
@@ -80,10 +83,15 @@ class CustomGNN(torch.nn.Module):
 
         for hl in self.hidden_layers:
             weights.append(hl.weight)
-            # for w in hl.get_weights():
-            #     weights.append(w)
 
         weights.append(self.output_layer.weight)
 
         return weights
     
+    def set_weights(self, weights):
+        self.input_layer.lin_rel.weight = weights[0]
+
+        for i, hl in enumerate(self.hidden_layers):
+            hl.weight = weights[i+1]
+
+        self.output_layer.weight = weights[-1]

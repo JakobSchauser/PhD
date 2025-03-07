@@ -22,7 +22,7 @@ class Environment():
     def __init__(self, data, positions, lr : float, weight_gain : float, stepsize : int, iterative_training : bool, ):
         # load the data
 
-        self.positions = positions
+        self.positions = [p.copy() for p in positions]
 
         self.ys = []       
         self.y_test = [] 
@@ -33,7 +33,7 @@ class Environment():
         self.border_mask = []
 
         for d, pos in zip(data, self.positions):
-            self.ys.append(torch.tensor(d, dtype=torch.float32))
+            self.ys.append(torch.tensor(d.copy(), dtype=torch.float32))
             edge, edge_weights, border_mask = self.get_edges(pos)
             self.edges.append(edge)
             self.edge_weights.append(edge_weights)
@@ -55,14 +55,16 @@ class Environment():
             return 0.
     
         l1_weights = torch.stack([wh.abs().sqrt().sum() for wh in self.model.get_weights()]).mean()
-        return l1_weights*self.weight_gain
+
+
+        return (l1_weights)*self.weight_gain
 
 
     def loss_fn(self, out, target):
         base_loss = F.mse_loss(out, target)
         
 
-        return base_loss 
+        return base_loss + self.loss_addition()
 
     @staticmethod
     def get_edges(positions):
@@ -82,17 +84,44 @@ class Environment():
             for ji, j in enumerate(indices[i]):
                 if j == -1:
                     continue
-                adj_matrix[i, j] = dists[i, ji]
-                adj_matrix[j, i] = dists[i, ji]
+                adj_matrix[i, j] = 1
+                adj_matrix[j, i] = 1
 
         # create edge data
         edges = torch.tensor(np.array(np.where(adj_matrix > 0)), dtype=torch.long).t().contiguous().T
         edge_weights = torch.tensor(adj_matrix[adj_matrix > 0], dtype=torch.float32)
 
-        # make border array if less than 3 nbs
-        border_mask = (adj_matrix>0.).sum(axis = 0) <= 4
+        # make border array
+        border_mask = Environment.find_border_mask(adj_matrix, positions)
         
         return edges, edge_weights, torch.tensor(border_mask)
+
+    @staticmethod
+    def find_border_mask(adjacency_matrix, positions):
+        # return (adjacency_matrix>0.).sum(axis = 0) <= 4
+    
+        boundary_mask = np.zeros(positions.shape[0], dtype=bool)
+
+        for i in range(positions.shape[0]):
+            if sum(adjacency_matrix[i]) == 0:
+                boundary_mask[i] = True
+                continue
+                
+            nb_poss =  positions[adjacency_matrix[i]>0.]
+            vecs_to_nbs = nb_poss - positions[i]
+
+            angles = np.arctan2(vecs_to_nbs[:, 1], vecs_to_nbs[:, 0])
+
+            sorted_angles = np.sort(angles)
+
+            # find the largest gap, taking into account the wrap around at 2pi
+            diffs = np.diff(sorted_angles)
+            diffs = np.concatenate([diffs, [2*np.pi + sorted_angles[0] - sorted_angles[-1]]])
+            boundary_mask[i] = diffs.max()>np.pi*0.9
+
+
+        return boundary_mask
+    
 
     def set_model(self, model):
 
@@ -110,12 +139,12 @@ class Environment():
 
     @staticmethod
     def call_model(model, X, edges, edge_weights, border_mask):
-            # print(X.shape, edges.shape, edge_weights.shape, border_mask.shape)
-            # torch.Size([N_cells]) torch.Size([2, 5982]) torch.Size([5982]) torch.Size([N_cells])
-            X = torch.cat((X, border_mask.unsqueeze(1)), dim = 1)
+        # print(X.shape, edges.shape, edge_weights.shape, border_mask.shape)
+        # torch.Size([N_cells]) torch.Size([2, 5982]) torch.Size([5982]) torch.Size([N_cells])
+        X = torch.cat((X, border_mask.unsqueeze(1)), dim = 1)
 
-            
-            return model(X, edges, edge_weights)
+        
+        return model(X, edges, edge_weights)
 
 
     def check_early_stop(self, avg_loss, test_loss):
@@ -163,7 +192,6 @@ class Environment():
                     out = self.call_own_model(X, edges, edge_weights, border_mask)
 
                     l_loss = self.loss_fn(out, target)# + self.loss_fn(GT_out, target)
-
                     loss += l_loss / n_steps
 
                     # GT = target.detach()
