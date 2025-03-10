@@ -144,14 +144,14 @@ def get_quality(model, data, positions, stepsize, show=0):
         X = out
 
         if show > 0 and(i+1)% (int(len(y_val)/stepsize/show)) == 0:
-            fig, axs = plt.subplots(1,4, figsize=(10,2.5), sharey=True, constrained_layout=True)
-            axs[0].scatter(poss[:,0], poss[:,1], c=out.detach().numpy()[:,0])
+            fig, axs = plt.subplots(1,4, figsize=(8,2), sharey=True, constrained_layout=True)
+            axs[0].scatter(poss[:,0], poss[:,1], c=out.detach().numpy()[:,0], s = 5.)
             axs[0].set_title("SMAD Prediction")
-            axs[1].scatter(poss[:,0], poss[:,1], c=target[:,0])
+            axs[1].scatter(poss[:,0], poss[:,1], c=target[:,0], s = 5.)
             axs[1].set_title("SMAD Target")
-            axs[2].scatter(poss[:,0], poss[:,1], c=out.detach().numpy()[:,1])
+            axs[2].scatter(poss[:,0], poss[:,1], c=out.detach().numpy()[:,1], s = 5.)
             axs[2].set_title("ERK Prediction")
-            axs[3].scatter(poss[:,0], poss[:,1], c=target[:,1])
+            axs[3].scatter(poss[:,0], poss[:,1], c=target[:,1], s = 5.)
             axs[3].set_title("ERK Target")
             plt.show()
         # X = torch.tensor(out, dtype=torch.float32).squeeze(1)
