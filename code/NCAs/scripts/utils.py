@@ -122,3 +122,65 @@ def get_quality(model, data, positions, stepsize, show=0):
         # X = torch.tensor(out, dtype=torch.float32).squeeze(1)
 
     return quality
+
+
+
+def signify_weights(weights, mask = None):
+    if not isinstance(weights, list):
+        weights = [weights]
+
+    if mask is None:
+        print("mask is not supplied, assuming all weights are significant")
+        mask = [np.ones_like(w).astype(bool) for w in weights]
+
+
+    sign_weights = [np.sign(w) for w in weights]
+
+    sign_weights = [w*(~m) for w,m in zip(sign_weights, mask)]
+
+    return sign_weights
+
+def find_most_optimal_permutations(all_weights, all_masks, signed = False):
+    if signed:
+        all_weights = [signify_weights(w, m) for w,m in zip(all_weights, all_masks)]
+
+
+    w1 = all_weights[0][0]
+
+    from itertools import permutations
+
+    dist_fn = lambda x,y: ((x != y)).mean(axis = (1,2)) if signed else ((x - y) ** 2).mean(axis = (1,2)) ** 0.5
+
+    all_permutations = []
+    # append the identity permutation
+    all_permutations.append(np.array(range(len(w1))))
+
+
+    for otherw in all_weights[1:]:
+        w2 = otherw[0]
+
+    # try every permutation of w2 and find the one with the smallest distance
+    # permute w2
+        w2_permuted = []
+
+        perms = list(permutations(range(len(w2))))
+
+        for perm in perms:
+            w2_permuted.append(w2[list(perm)])
+
+        w2_permuted = np.array(w2_permuted)
+
+
+        # distances = ((w1 - w2_permuted) ** 2).mean(axis = (1,2)) ** 0.5
+        distances = dist_fn(w1, w2_permuted)
+
+        min_index = np.argmin(distances)
+        all_permutations.append(list(perms[min_index]))
+
+    return all_permutations
+
+def implement_permutation(weights, masks, permutations):
+    p_weights = [weights[0][permutations], weights[1].T[permutations].T ] 
+    p_masks = [masks[0][permutations], masks[1].T[permutations].T] 
+
+    return p_weights, p_masks
