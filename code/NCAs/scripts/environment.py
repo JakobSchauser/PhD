@@ -40,6 +40,7 @@ class Environment():
             self.border_mask.append(border_mask)
 
         self.model = None
+        self.previous_model = None
         self.optimizer = None
 
         self.early_stop_count = 0
@@ -202,6 +203,9 @@ class Environment():
 
                     loss += self.loss_addition() / n_steps
 
+                    if self.previous_model is not None:
+                        loss += self.common_loss_function(self.model, self.previous_model) / n_steps
+
                     loss.backward()
 
                     self.optimizer.step()
@@ -221,4 +225,26 @@ class Environment():
                 print(l1_weights.item())
                     # break
 
- 
+    
+    def common_loss_function(self, model1, model2):
+        weights1 = model1.get_weights()
+        weights2 = model2.get_weights()
+
+
+        for w1, w2 in zip(weights1, weights2):
+            assert w1.shape == w2.shape, "Weights are not the same shape"
+            a_norms = torch.linalg.norm(w1, dim=0)
+            b_norms = torch.linalg.norm(w2, dim=0)
+            a_b_diffs = torch.linalg.norm(w1[:, :, None] - w2[:, None, :], dim=0)
+            layer = torch.prod(a_b_diffs / (a_norms[:, None] + b_norms[None, :]), dim=1)
+            sums = torch.sum(layer)
+            break
+
+        return  - sums
+    
+    def common_loss_function_multiple(self, models):
+        tots = 0.
+        for i in range(1, len(models)):
+            tots += self.common_loss_function(models[i-1], models[i])
+
+        return tots / (len(models)-1)
