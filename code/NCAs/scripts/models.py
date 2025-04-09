@@ -19,13 +19,13 @@ from scripts.layers import CustomGraphConv
 
 
 class CustomGNN(torch.nn.Module):
-    def __init__(self, input_dims, hidden_dims, output_dims,  biases : bool,aggregation = "add",):
+    def __init__(self, input_dims, hidden_dims, output_dims,  biases : bool,aggregation = "add", name = "CustomGNN"):
         super(CustomGNN, self).__init__()
         # check if list
         if type(hidden_dims) is not list:
             hidden_dims = [hidden_dims]
         
-
+        self.name = name
         
         # convolutional layer
         self.input_layer = CustomGraphConv(input_dims*2, hidden_dims[0], aggr=aggregation, bias = biases)

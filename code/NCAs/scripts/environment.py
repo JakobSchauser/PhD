@@ -19,13 +19,12 @@ from scripts.nb_functions import find_filtered_voronoi_neighbor_knn_limited_mask
 
 
 class Environment():
-    def __init__(self, data, positions, lr : float, weight_gain : float, stepsize : int, iterative_training : bool, ):
+    def __init__(self, data, positions, lr : float, weight_gain : float, diversity_gain :float, stepsize : int, iterative_training : bool, ):
         # load the data
 
         self.positions = [p.copy() for p in positions]
 
         self.ys = []       
-        self.y_test = [] 
 
         
         self.edges = []
@@ -40,13 +39,14 @@ class Environment():
             self.border_mask.append(border_mask)
 
         self.model = None
-        self.previous_model = None
+        self.previous_model_weights = None
         self.optimizer = None
 
         self.early_stop_count = 0
 
         self.lr = lr
         self.weight_gain = weight_gain
+        self.diversity_gain = diversity_gain
         self.stepsize = stepsize
         self.iterative_training = iterative_training
 
@@ -65,7 +65,7 @@ class Environment():
         base_loss = F.mse_loss(out, target)
         
 
-        return base_loss + self.loss_addition()
+        return base_loss * 1000.
 
     @staticmethod
     def get_edges(positions):
@@ -133,6 +133,13 @@ class Environment():
 
         self.optimizer = torch.optim.Adam(model.parameters(), lr=self.lr)
 
+    def set_previous_model(self, model):
+        weights = model.get_weights()
+
+        detached_weights = [w.detach() for w in weights]
+        self.previous_model_weights = detached_weights
+
+
     def call_own_model(self, X, edges, edge_weights, border_mask):
         
         return self.call_model(self.model, X, edges, edge_weights, border_mask)
@@ -184,7 +191,7 @@ class Environment():
                     self.optimizer.zero_grad()
                     loss = torch.tensor(0.0)
 
-                    target = yy[(i+1)*self.stepsize]
+                    target = yy[(i+1)*self.stepsize] 
 
                     # X, target = self.transformation(X, target)
 
@@ -193,7 +200,7 @@ class Environment():
                     out = self.call_own_model(X, edges, edge_weights, border_mask)
 
                     l_loss = self.loss_fn(out, target)# + self.loss_fn(GT_out, target)
-                    loss += l_loss / n_steps
+                    loss += l_loss / n_steps 
 
                     # GT = target.detach()
                     if self.iterative_training:
@@ -203,8 +210,8 @@ class Environment():
 
                     loss += self.loss_addition() / n_steps
 
-                    if self.previous_model is not None:
-                        loss += self.common_loss_function(self.model, self.previous_model) / n_steps
+                    if self.previous_model_weights is not None:
+                        loss += self.common_loss_function() / n_steps * self.diversity_gain
 
                     loss.backward()
 
@@ -215,22 +222,63 @@ class Environment():
 
             avg_loss = avg_loss.item() * 1000.
 
-            if epoch % 5 == 0:
+            if epoch % 10 == 0:
                 print(epoch)
-                print(f"{epoch/epochs:.3} loss:", avg_loss)
+                test_accuracy = self.get_accuracy()
+
                 # test_loss = self.test()
                 # if self.check_early_stop(avg_loss, test_loss):
                     # print('Early stoppping')
                 l1_weights = torch.sum(torch.tensor([F.mse_loss(wh, torch.zeros_like(wh)) for wh in self.model.get_weights()]))
-                print(l1_weights.item())
-                    # break
+
+                print(f"{self.model.name} | {epoch/epochs:.3} loss:", avg_loss, "| accuracy:", test_accuracy, "| l1 weights:", l1_weights.item()) 
+
 
     
-    def common_loss_function(self, model1, model2):
-        weights1 = model1.get_weights()
-        weights2 = model2.get_weights()
+    def get_accuracy(self):
+        yi = np.random.randint(0, len(self.ys))
+
+        y_test = self.ys[yi]
+
+        edges = self.edges[yi]
+        edge_weights = self.edge_weights[yi]
+        border = self.border_mask[yi]
+        X = torch.zeros_like(y_test[0])
+
+        self.model.eval()
+
+        quality = torch.tensor(0.0)
+        N_steps = int(len(y_test)//self.stepsize) - 1
+        for i in range(N_steps):
+            out = Environment.call_model(self.model, X, edges, edge_weights, border)
+
+            target = y_test[(i+1)*self.stepsize]
 
 
+            off = torch.linalg.norm(torch.abs(out - target), axis=1)
+
+            quality += torch.mean(off)
+            
+            X = out
+
+
+        quality /= N_steps
+
+
+        self.model.train()
+
+        return quality.item() 
+
+
+    def common_loss_function(self,):
+        weights1 = self.model.get_weights()
+        weights2 = self.previous_model_weights
+
+        return self.get_diversity(weights1, weights2)
+
+
+    @staticmethod
+    def get_diversity(weights1, weights2):
         for w1, w2 in zip(weights1, weights2):
             assert w1.shape == w2.shape, "Weights are not the same shape"
             a_norms = torch.linalg.norm(w1, dim=0)
@@ -240,11 +288,5 @@ class Environment():
             sums = torch.sum(layer)
             break
 
-        return  - sums
+        return  -sums
     
-    def common_loss_function_multiple(self, models):
-        tots = 0.
-        for i in range(1, len(models)):
-            tots += self.common_loss_function(models[i-1], models[i])
-
-        return tots / (len(models)-1)
