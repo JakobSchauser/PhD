@@ -209,9 +209,10 @@ class Environment():
                         X = target.detach()
 
                     loss += self.loss_addition() / n_steps
-
+                    addddd = 0.
                     if self.previous_model_weights is not None:
-                        loss += self.common_loss_function() / n_steps * self.diversity_gain
+                        addddd = self.common_loss_function() / n_steps * self.diversity_gain
+                        loss += addddd
 
                     loss.backward()
 
@@ -231,7 +232,8 @@ class Environment():
                     # print('Early stoppping')
                 l1_weights = torch.sum(torch.tensor([F.mse_loss(wh, torch.zeros_like(wh)) for wh in self.model.get_weights()]))
 
-                print(f"{self.model.name} | {epoch/epochs:.3} loss:", avg_loss, "| accuracy:", test_accuracy, "| l1 weights:", l1_weights.item()) 
+
+                print(f"{self.model.name} | {epoch/epochs:.3} loss:", avg_loss, "| accuracy:", test_accuracy, "| l1 weights:", l1_weights.item(), ("" if self.previous_model_weights is None else  f"| diversity: {self.common_loss_function().item()}"))
 
 
     
@@ -274,18 +276,45 @@ class Environment():
         weights1 = self.model.get_weights()
         weights2 = self.previous_model_weights
 
-        return self.get_diversity(weights1, weights2)
+        return self.get_diversity_symmetric(weights1, weights2)
 
 
     @staticmethod
     def get_diversity(weights1, weights2):
+        sums = 0.
         for w1, w2 in zip(weights1, weights2):
             assert w1.shape == w2.shape, "Weights are not the same shape"
-            a_norms = torch.linalg.norm(w1, dim=0)
-            b_norms = torch.linalg.norm(w2, dim=0)
-            a_b_diffs = torch.linalg.norm(w1[:, :, None] - w2[:, None, :], dim=0)
-            layer = torch.prod(a_b_diffs / (a_norms[:, None] + b_norms[None, :]), dim=1)
-            sums = torch.sum(layer)
+            w1 = w1.T
+            w2 = w2.T
+
+            a_b_diffs = torch.linalg.norm(w1[None, :, :] - w2[:, None, :], dim=2)
+
+            a_norms = torch.linalg.norm(w1, dim=1)
+            b_norms = torch.linalg.norm(w2, dim=1)
+            layer = torch.prod(a_b_diffs, dim=1) / (a_norms + b_norms)
+            sums += torch.sum(layer)
+            break
+
+        return  -sums
+    
+
+
+    @staticmethod
+    def get_diversity_symmetric(weights1, weights2):
+        sums = 0.
+        for w1, w2 in zip(weights1, weights2):
+            assert w1.shape == w2.shape, "Weights are not the same shape"
+            w1 = w1.T
+            w2 = w2.T
+
+            a_b_diffs = torch.linalg.norm(w1[None, :, :] - w2[:, None, :], dim=2)
+
+            a_norms = torch.linalg.norm(w1, dim=1)
+            b_norms = torch.linalg.norm(w2, dim=1)
+
+            layer1 = torch.prod(a_b_diffs , dim=0) / (a_norms + b_norms)
+            layer2 = torch.prod(a_b_diffs , dim=1) / (a_norms + b_norms)
+            sums += torch.sum(layer1) + torch.sum(layer2)
             break
 
         return  -sums

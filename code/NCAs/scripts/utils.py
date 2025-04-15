@@ -143,7 +143,10 @@ def signify_weights(weights, mask = None):
 
     return sign_weights
 
-def find_most_optimal_permutations(all_weights, all_masks, signed = False):
+
+
+def find_most_optimal_permutations(all_weights, all_masks = None, signed = False):
+
     if signed:
         all_weights = [signify_weights(w, m) for w,m in zip(all_weights, all_masks)]
 
@@ -177,13 +180,17 @@ def find_most_optimal_permutations(all_weights, all_masks, signed = False):
         # distances = ((w1 - w2_permuted) ** 2).mean(axis = (1,2)) ** 0.5
         distances = dist_fn(w1, w2_permuted)
 
+
         min_index = np.argmin(distances)
         all_permutations.append(list(perms[min_index]))
 
     return all_permutations
 
-def implement_permutation(weights, masks, permutations):
+def implement_permutations(weights, permutations, masks = None, ):
     p_weights = [weights[0][permutations], weights[1].T[permutations].T ] 
+    if masks is None:
+        return p_weights
+    
     p_masks = [masks[0][permutations], masks[1].T[permutations].T] 
 
     return p_weights, p_masks
