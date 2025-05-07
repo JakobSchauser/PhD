@@ -17,7 +17,7 @@ $$e^{-\tilde{r}_{ij}}-S(r_{ij})e^{-\tilde{r}_{ij}/\beta}$$
 
 Which gives the new equilibrium distance $\tilde{r}_{eq}=r_{eq}/Η(\alpha)$
 
-Now, $H(\alpha)$ is a function that goes from $1-e$ to $1+e$ according to the angle ($\alpha$) between their in-plane axis (_q_) and distance vector ($r_{ij}$) 
+Where $H(\alpha)$ is a function that goes from $1-e$ to $1+e$ according to the angle ($\alpha$) between their in-plane axis (_q_) and distance vector ($r_{ij}$) 
 $$H(\alpha)=1 + (2\cdot f(\alpha) - 1)\cdot e$$
 
 _f_ is an "easing function" (think activation function in machine learning) that defined 
