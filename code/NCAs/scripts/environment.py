@@ -60,6 +60,24 @@ class Environment():
 
         return (l1_weights)*self.weight_gain
 
+    def set_diversity_gain(self, diversity_gain):
+        self.diversity_gain = diversity_gain
+
+    def set_weight_gain(self, weight_gain):
+        self.weight_gain = weight_gain
+
+    def loss_addition_cutoff(self):
+        if self.weight_gain == 0.:
+            return 0.
+    
+        threshold = 1e-4
+
+        add = 0.
+        for wh in self.model.get_weights():
+            lay = wh.abs() - threshold
+            add += torch.relu(lay).sum()
+
+        return add*self.weight_gain
 
     def loss_fn(self, out, target):
         base_loss = F.mse_loss(out, target)
@@ -208,7 +226,8 @@ class Environment():
                     else:
                         X = target.detach()
 
-                    loss += self.loss_addition() / n_steps
+                    # loss += self.loss_addition() / n_steps
+                    loss += self.loss_addition_cutoff() / n_steps
                     addddd = 0.
                     if self.previous_model_weights is not None:
                         addddd = self.common_loss_function() / n_steps * self.diversity_gain
@@ -295,7 +314,7 @@ class Environment():
             sums += torch.sum(layer)
             break
 
-        return  -sums
+        return -sums
     
 
 
@@ -309,13 +328,13 @@ class Environment():
 
             a_b_diffs = torch.linalg.norm(w1[None, :, :] - w2[:, None, :], dim=2)
 
-            a_norms = torch.linalg.norm(w1, dim=1)
-            b_norms = torch.linalg.norm(w2, dim=1)
+            # a_norms = torch.linalg.norm(w1, dim=1)
+            # b_norms = torch.linalg.norm(w2, dim=1)
 
-            layer1 = torch.prod(a_b_diffs , dim=0) / (a_norms + b_norms)
-            layer2 = torch.prod(a_b_diffs , dim=1) / (a_norms + b_norms)
+            layer1 = torch.prod(a_b_diffs , dim=0)# / (a_norms + b_norms)
+            layer2 = torch.prod(a_b_diffs , dim=1)# / (a_norms + b_norms)
             sums += torch.sum(layer1) + torch.sum(layer2)
             break
 
-        return  -sums
+        return -sums
     
