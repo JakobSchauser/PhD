@@ -216,15 +216,19 @@ class Environment():
                     # GT_out = self.call_own_model(GT, edges, edge_weights, border_mask)
 
                     out = self.call_own_model(X, edges, edge_weights, border_mask)
+                    
+                    if self.iterative_training:
+                        X = out.detach()
+                        if i < n_steps - 1:
+                            continue
 
                     l_loss = self.loss_fn(out, target)# + self.loss_fn(GT_out, target)
                     loss += l_loss / n_steps 
 
                     # GT = target.detach()
-                    if self.iterative_training:
-                        X = out.detach()
-                    else:
-                        X = target.detach()
+
+                    
+                    X = target.detach()
 
                     # loss += self.loss_addition() / n_steps
                     loss += self.loss_addition_cutoff() / n_steps
