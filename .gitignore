@@ -5,3 +5,4 @@
 
 *.pyc
 *.pth
+code/NCAs/MNIST/mnist_train.csv
