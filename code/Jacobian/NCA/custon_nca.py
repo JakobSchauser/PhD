@@ -14,59 +14,59 @@ from torch_geometric.utils import spmm
 import torch.nn.functional as F
 
 class CustomGNN(torch.nn.Module):
-    def __init__(self, input_dims, hidden_dims, output_dims,  biases : bool,aggregation = "add", name = "CustomGNN"):
-        super(CustomGNN, self).__init__()
+	def __init__(self, input_dims, hidden_dims, output_dims,  biases : bool, aggregation = "add", name = "CustomGNN"):
+		super(CustomGNN, self).__init__()
 
-        # check if list
-        if type(hidden_dims) is not list:
-            hidden_dims = [hidden_dims]
-        
-        self.name = name
-        
-        # convolutional layer
-        self.input_layer = CustomGraphConv(input_dims*2, hidden_dims[0], aggr=aggregation, bias = biases)
+		# check if list
+		if type(hidden_dims) is not list:
+			hidden_dims = [hidden_dims]
+		
+		self.name = name
+		
+		# convolutional layer
+		self.input_layer = CustomGraphConv(input_dims*2 + 1, hidden_dims[0], aggr=aggregation, bias = biases)
 
-        self.hidden_layers = torch.nn.ModuleList()
-        # Linear layers
-        for i in range(len(hidden_dims)-1):
-            _in = hidden_dims[i]
-            _out = hidden_dims[i+1]
+		self.hidden_layers = torch.nn.ModuleList()
+		# Linear layers
+		for i in range(len(hidden_dims)-1):
+			_in = hidden_dims[i]
+			_out = hidden_dims[i+1]
 
-            self.hidden_layers.append(Linear(_in, _out, bias = biases))
-            # self.hidden_layers.append(CustomGatedPolynomial(_in, _out))
-
-
-        self.output_layer = Linear(hidden_dims[-1], output_dims, bias = True)
+			self.hidden_layers.append(Linear(_in, _out, bias = biases))
+			# self.hidden_layers.append(CustomGatedPolynomial(_in, _out))
 
 
-
-    def forward(self, feature_data, edge_info, edge_weights):
-
-        # First Graph Convolutional layer (message passing)
-        x = self.input_layer(feature_data, edge_info, edge_weights)
-        x = F.relu(x)
+		self.output_layer = Linear(hidden_dims[-1], output_dims, bias = True)
 
 
-        for layer in self.hidden_layers:
-            x = layer(x)
-            x = F.relu(x)            
 
-        x = self.output_layer(x, )
-        
-        return x
+	def forward(self, feature_data, edge_info, edge_weights):
+
+		# First Graph Convolutional layer (message passing)
+		x = self.input_layer(feature_data, edge_info, edge_weights)
+		x = F.relu(x)
 
 
-    def get_weights(self):
-        weights = []
-        weights.append(self.input_layer.lin_rel.weight)
+		for layer in self.hidden_layers:
+			x = layer(x)
+			x = F.relu(x)            
 
-        for hl in self.hidden_layers:
-            weights.append(hl.weight)
+		x = self.output_layer(x, )
+		
+		return x
 
-        weights.append(self.output_layer.weight)
 
-        return weights
-    
+	def get_weights(self):
+		weights = []
+		weights.append(self.input_layer.lin_rel.weight)
+
+		for hl in self.hidden_layers:
+			weights.append(hl.weight)
+
+		weights.append(self.output_layer.weight)
+
+		return weights
+	
 
 
 class CustomGraphConv(MessagePassing):
@@ -98,22 +98,22 @@ class CustomGraphConv(MessagePassing):
 		# self.lin_root.reset_parameters()
 
 
-	def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
+	def forward(self, x: Tensor, edge_index: Adj,
 				edge_weight: OptTensor = None, size: Size = None, add_root_weight : bool = True) -> Tensor:
-
-		if isinstance(x, Tensor):
-			x = (x, x)
+		x = x.unsqueeze(1) if x.dim() == 1 else x
+				  
 
 		msg = self.propagate(edge_index, x=x, edge_weight=edge_weight,
 							 size=size)
 
-		x_r : Tensor = x[1]  # Root node features.
-
-		
-		msg = torch.cat((x_r, msg), dim=1)
+		node_indices = torch.arange(x.size(0), device=x.device).unsqueeze(1).float() / x.size(0)
 
 
-		out = self.lin_rel(msg)
+		out_msg = torch.cat((x, msg, node_indices), dim=1)
+		# out_msg = torch.cat((x, msg), dim=1)
+
+
+		out = self.lin_rel(out_msg)
 		
 		return out
 

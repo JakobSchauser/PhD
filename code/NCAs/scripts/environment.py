@@ -165,7 +165,7 @@ class Environment():
 
     @staticmethod
     def call_model(model, X, edges, edge_weights, border_mask):
-        # print(X.shape, edges.shape, edge_weights.shape, border_mask.shape)
+        # print(     X.shape,            edges.shape,   edge_weights.shape, border_mask.shape)
         # torch.Size([N_cells]) torch.Size([2, 5982]) torch.Size([5982]) torch.Size([N_cells])
         X = torch.cat((X, border_mask.unsqueeze(1)), dim = 1)
 

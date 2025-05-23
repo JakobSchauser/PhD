@@ -22,13 +22,16 @@ class DiffusionSimulator:
 
     @staticmethod
     def laplacian(Z):
-        return (
-            -4 * Z
-            + np.roll(Z, 1, axis=0)
-            + np.roll(Z, -1, axis=0)
-            + np.roll(Z, 1, axis=1)
-            + np.roll(Z, -1, axis=1)
+        L = np.zeros_like(Z)
+        # Interior points
+        L[1:-1, 1:-1] = (
+            -4 * Z[1:-1, 1:-1]
+            + Z[2:, 1:-1] + Z[:-2, 1:-1]
+            + Z[1:-1, 2:] + Z[1:-1, :-2]
         )
+        # Edges and corners are not updated (will be set to 0 as sinks)
+        return L
+
 
     def update(self):
         a_new = self.a + self.diff_a * self.laplacian(self.a) * self.dt
