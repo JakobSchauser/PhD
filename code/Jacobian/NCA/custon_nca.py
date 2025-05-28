@@ -24,7 +24,7 @@ class CustomGNN(torch.nn.Module):
 		self.name = name
 		
 		# convolutional layer
-		self.input_layer = CustomGraphConv(input_dims*2 + 1, hidden_dims[0], aggr=aggregation, bias = biases)
+		self.input_layer = CustomGraphConv((input_dims+1)*2, hidden_dims[0], aggr=aggregation, bias = biases)
 
 		self.hidden_layers = torch.nn.ModuleList()
 		# Linear layers
@@ -106,11 +106,15 @@ class CustomGraphConv(MessagePassing):
 		msg = self.propagate(edge_index, x=x, edge_weight=edge_weight,
 							 size=size)
 
-		node_indices = torch.arange(x.size(0), device=x.device).unsqueeze(1).float() / x.size(0)
+		# node_indices = torch.arange(x.size(0), device=x.device).unsqueeze(1)
 
 
-		out_msg = torch.cat((x, msg, node_indices), dim=1)
+
+		# print("node_indices", node_indices.shape)
+		# print("msg", msg.shape)
+		out_msg = torch.cat((x, msg), dim=1)
 		# out_msg = torch.cat((x, msg), dim=1)
+
 
 
 		out = self.lin_rel(out_msg)
