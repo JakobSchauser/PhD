@@ -39,17 +39,27 @@ class CustomGNN(torch.nn.Module):
 		self.output_layer = Linear(hidden_dims[-1], output_dims, bias = True)
 
 
+		self.saved_messages = None  # To store messages for debugging or analysis
+
+
 
 	def forward(self, feature_data, edge_info, edge_weights):
 
 		# First Graph Convolutional layer (message passing)
 		x = self.input_layer(feature_data, edge_info, edge_weights)
-		x = F.relu(x)
 
+		# activation_func = F.relu
+		# activation_func = F.sigmoid
+		activation_func = F.elu
+
+		x = activation_func(x)  # Apply activation function to the output of the first layer
+
+
+		self.saved_messages = self.input_layer.saved_messages  # Save messages for later use
 
 		for layer in self.hidden_layers:
 			x = layer(x)
-			x = F.relu(x)            
+			x = activation_func(x)  # Apply activation function to each hidden layer output           
 
 		x = self.output_layer(x, )
 		
@@ -67,7 +77,19 @@ class CustomGNN(torch.nn.Module):
 
 		return weights
 	
+	def get_biases(self):
+		biases = []
+		if self.input_layer.lin_rel.bias is not None:
+			biases.append(self.input_layer.lin_rel.bias)
 
+		for hl in self.hidden_layers:
+			if hl.bias is not None:
+				biases.append(hl.bias)
+
+		if self.output_layer.bias is not None:
+			biases.append(self.output_layer.bias)
+
+		return biases
 
 class CustomGraphConv(MessagePassing):
 	def __init__(
@@ -92,6 +114,8 @@ class CustomGraphConv(MessagePassing):
 
 		self.reset_parameters()
 
+		self.saved_messages = None
+
 	def reset_parameters(self):
 		super().reset_parameters()
 		self.lin_rel.reset_parameters()
@@ -102,12 +126,10 @@ class CustomGraphConv(MessagePassing):
 				edge_weight: OptTensor = None, size: Size = None, add_root_weight : bool = True) -> Tensor:
 		x = x.unsqueeze(1) if x.dim() == 1 else x
 				  
+		self.saved_messages = None  # Save messages for later use
 
-		msg = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-							 size=size)
-
+		msg = self.get_message(x, edge_index, edge_weight, size=size)
 		# node_indices = torch.arange(x.size(0), device=x.device).unsqueeze(1)
-
 
 
 		# print("node_indices", node_indices.shape)
@@ -123,8 +145,27 @@ class CustomGraphConv(MessagePassing):
 
 
 	def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
-		return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
+		msg =  x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
+
+		return msg
 
 	def message_and_aggregate(self, adj_t: Adj, x: OptPairTensor) -> Tensor:
-		return spmm(adj_t, x[0], reduce=self.aggr)
+		msg =  spmm(adj_t, x[0], reduce=self.aggr)
+		return msg
+	
+	def get_message(self, x: Tensor, edge_index: Adj, edge_weight: OptTensor, size = None) -> Tensor:
+		x = x.unsqueeze(1) if x.dim() == 1 else x
+				  
+
+		msg = self.propagate(edge_index, x=x, edge_weight=edge_weight,
+							 size=size)
+		
+		msgs = [m.squeeze(1) for m in msg.split(1, dim=1)]  # Split messages by node
+		# print(msgs[0].shape, len(msgs))
+		
+		self.saved_messages = msgs  # Save messages for later use
+
+		msg = torch.stack(msgs, dim=1)  # Stack messages along a new dimension
+		# print("Final message shape:", msg.shape)
+		return msg
 	

@@ -147,7 +147,8 @@ class Environment():
 		# compiled_model = intel_npu_acceleration_library.compile(model, compiler_conf)
 		self.model = model
 
-		self.optimizer = torch.optim.Adam(model.parameters(), lr=self.lr)
+		self.optimizer = torch.optim.AdamW(model.parameters(), lr=self.lr, 
+											weight_decay=self.weight_gain)
 
 	def set_previous_model(self, model):
 		weights = model.get_weights()
@@ -160,6 +161,14 @@ class Environment():
 		
 		return self.call_model(self.model, X, edges, edge_weights, border_mask)
 
+
+	def call_own_model_and_return_messages(self, X, edges, edge_weights, border_mask):
+		
+		output = self.call_model(self.model, X, edges, edge_weights, border_mask)
+
+		msgs = self.model.saved_messages
+
+		return output, msgs
 
 	@staticmethod
 	def call_model(model, X, edges, edge_weights, border_mask):
@@ -206,6 +215,7 @@ class Environment():
 				X = torch.zeros_like(yy[0])
 
 				for i in range(n_steps):
+					# start_X = X.detach().clone()  # save the initial state of X
 					self.optimizer.zero_grad()
 					loss = torch.tensor(0.0)
 
@@ -216,9 +226,10 @@ class Environment():
 					# GT_out = self.call_own_model(GT, edges, edge_weights, border_mask)
 					for j in range(self.steps_per_data_point):
 						out = self.call_own_model(X, edges, edge_weights, border_mask)
-						X = out.detach()
+						if j != self.steps_per_data_point - 1:
+							X = out.detach() + X
 
-					l_loss = self.loss_fn(out, target)# + self.loss_fn(GT_out, target)
+					l_loss = self.loss_fn(out + X, target)# + self.loss_fn(GT_out, target)
 					
 					loss += l_loss 
 
@@ -284,7 +295,7 @@ class Environment():
 		return quality.item() 
 
 	
-	def test_quality(self, show=0):
+	def test_quality(self, show=0, guess_change = False):
 
 		data_i = np.random.randint(0, len(self.ys)) 
 
@@ -302,7 +313,13 @@ class Environment():
 
 			for j in range(self.steps_per_data_point):
 				out = self.call_own_model(X, edges, edge_weights, border_mask)
-				X = out.detach()
+				if not guess_change:
+					# if we are not guessing the change, we just take the output
+					X = out.detach() 
+				else:
+					# if we are guessing the change, we add the output to the previous output
+					X = out.detach() + X
+					
 
 			target = y_val[(i+1)]
 			plottarget = y_val[(i+1)]
@@ -327,3 +344,10 @@ class Environment():
 			# X = torch.tensor(out, dtype=torch.float32).squeeze(1)
 
 		return quality
+	
+	def get_message(self, X, edges, edge_weights):
+		msg = self.model.get_message(
+			X, edges, edge_weights, size=None
+		)
+
+		return msg
