@@ -18,7 +18,7 @@ from custon_nca import CustomGNN
 
 
 class Environment():
-	def __init__(self, model : CustomGNN,  data, positions, lr : float, weight_gain : float, diversity_gain :float, steps_per_data_point :int= 1):
+	def __init__(self, model : CustomGNN,  data, positions, lr : float, weight_gain : float, diversity_gain :float, steps_per_data_point :int= 1, gradient_regularization = 0.0001):
 		# load the data
 
 		self.positions = [p.copy() for p in positions]
@@ -46,6 +46,7 @@ class Environment():
 		self.lr = lr
 		self.weight_gain = weight_gain
 		self.diversity_gain = diversity_gain
+		self.gradient_regularization = gradient_regularization
 		self.steps_per_data_point = steps_per_data_point
 		self.set_model(model)
 
@@ -76,6 +77,31 @@ class Environment():
 			add += torch.relu(lay).sum()
 
 		return add*self.weight_gain
+	
+	def loss_addition_sparse_gradient_regularization(self, inps, outputs):
+		# assuming outputs has been computed with the self.model
+
+		alpha = 100.0
+	
+		loss_add = 0.
+		for inp, outs in zip(inps, outputs):
+			# compute the gradient of the output with respect to the input
+
+			# make scalar
+			out = outs.sum(dim = 0) 
+
+			# grad = torch.autograd.grad(out, inp, retain_graph=True)[0]
+			grad = inps.grad
+			print("grad", grad)
+
+			# compute the l1 norm of the gradient
+			l1_grad = grad.abs().sum()
+
+			# add the l1 norm to the loss
+			loss_add += l1_grad
+
+		loss_add /= len(inps)
+		return loss_add * alpha
 
 	def loss_fn(self, out, target):
 		base_loss = F.mse_loss(out, target)
@@ -216,6 +242,7 @@ class Environment():
 
 				for i in range(n_steps):
 					# start_X = X.detach().clone()  # save the initial state of X
+					X.requires_grad = True  # make sure X is a trainable parameter
 					self.optimizer.zero_grad()
 					loss = torch.tensor(0.0)
 
@@ -227,13 +254,29 @@ class Environment():
 					for j in range(self.steps_per_data_point):
 						out = self.call_own_model(X, edges, edge_weights, border_mask)
 						if j != self.steps_per_data_point - 1:
-							X = out.detach() + X
+							X = X.clone() + out.detach()
+							X.retain_grad()
 
-					l_loss = self.loss_fn(out + X, target)# + self.loss_fn(GT_out, target)
+					# loss += self.loss_addition_sparse_gradient_regularization(X, out)  # add the sparse gradient regularization
+
+					loss += self.loss_fn(out + X, target)# + self.loss_fn(GT_out, target)
 					
-					loss += l_loss 
+					# loss += l_loss 
 
 					loss += self.loss_addition_cutoff()  # add the l1 loss
+
+
+					# loss.backward()
+
+					# loss += self.loss_addition_sparse_gradient_regularization(X, out)  # add the sparse gradient regularization
+
+					grad = torch.autograd.grad(
+						outputs=out.sum(),  # Must be scalar
+						inputs=X,
+						create_graph=True
+					)[0]
+					gradient_addition = grad.abs().sum() * self.gradient_regularization
+					loss += gradient_addition
 
 					loss.backward()
 
