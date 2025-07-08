@@ -95,7 +95,7 @@ class Environment():
 			print("grad", grad)
 
 			# compute the l1 norm of the gradient
-			l1_grad = grad.abs().sum()
+			l1_grad = grad.abs().sqrt().sum()
 
 			# add the l1 norm to the loss
 			loss_add += l1_grad
