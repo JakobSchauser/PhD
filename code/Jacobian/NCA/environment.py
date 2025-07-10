@@ -254,12 +254,12 @@ class Environment():
 					for j in range(self.steps_per_data_point):
 						out = self.call_own_model(X, edges, edge_weights, border_mask)
 						if j != self.steps_per_data_point - 1:
-							X = X.clone() + out.detach()
+							X = X.clone() + out.detach()[:2]
 							X.retain_grad()
 
 					# loss += self.loss_addition_sparse_gradient_regularization(X, out)  # add the sparse gradient regularization
 
-					loss += self.loss_fn(out + X, target)# + self.loss_fn(GT_out, target)
+					loss += self.loss_fn(out[2:], target)# + self.loss_fn(GT_out, target)
 					
 					# loss += l_loss 
 
@@ -325,7 +325,7 @@ class Environment():
 			target = y_test[(i+1)]
 
 
-			off = torch.linalg.norm(torch.abs(out - target), axis=1)
+			off = torch.linalg.norm(torch.abs(out[2:] - target), axis=1)
 
 			quality += torch.mean(off)
 			
@@ -367,7 +367,7 @@ class Environment():
 			target = y_val[(i+1)]
 			plottarget = y_val[(i+1)]
 
-			off = np.linalg.norm(np.abs(out.detach().numpy() - target.detach().numpy()), axis=1)
+			off = np.linalg.norm(np.abs(out.detach().numpy()[2:] - target.detach().numpy()), axis=1)
 
 			quality += np.mean(off)
 
