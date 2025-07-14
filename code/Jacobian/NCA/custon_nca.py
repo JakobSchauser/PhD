@@ -36,7 +36,7 @@ class CustomGNN(torch.nn.Module):
 			# self.hidden_layers.append(CustomGatedPolynomial(_in, _out))
 
 
-		self.output_layer = Linear(hidden_dims[-1] + 2, output_dims, bias = True)
+		self.output_layer = Linear(hidden_dims[-1], output_dims + 2, bias = True)
 
 
 		self.saved_messages = None  # To store messages for debugging or analysis

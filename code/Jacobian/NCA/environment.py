@@ -254,13 +254,13 @@ class Environment():
 					for j in range(self.steps_per_data_point):
 						out = self.call_own_model(X, edges, edge_weights, border_mask)
 						if j != self.steps_per_data_point - 1:
-							X = X.clone() + out.detach()[:2]
+							X = X.clone() + out.detach()[:,:2]
 							X.retain_grad()
 
 					# loss += self.loss_addition_sparse_gradient_regularization(X, out)  # add the sparse gradient regularization
 
-					loss += self.loss_fn(out[2:], target)# + self.loss_fn(GT_out, target)
-					
+					loss += self.loss_fn(out[:,2:], target)# + self.loss_fn(GT_out, target)
+			
 					# loss += l_loss 
 
 					loss += self.loss_addition_cutoff()  # add the l1 loss
@@ -320,12 +320,12 @@ class Environment():
 		for i in range(N_steps):
 			for j in range(self.steps_per_data_point):
 				out = self.call_own_model(X, edges, edge_weights, border)
-				X = out.detach()
+				X = X.clone() + out.detach()[:,:2]
 
 			target = y_test[(i+1)]
 
 
-			off = torch.linalg.norm(torch.abs(out[2:] - target), axis=1)
+			off = torch.linalg.norm(torch.abs(out[:,2:] - target), axis=1)
 
 			quality += torch.mean(off)
 			
@@ -361,28 +361,28 @@ class Environment():
 					X = out.detach() 
 				else:
 					# if we are guessing the change, we add the output to the previous output
-					X = out.detach() + X
+					X = out.detach()[:,:2] + X
 					
 
 			target = y_val[(i+1)]
 			plottarget = y_val[(i+1)]
 
-			off = np.linalg.norm(np.abs(out.detach().numpy()[2:] - target.detach().numpy()), axis=1)
+			off = np.linalg.norm(np.abs(out.detach().numpy()[:,2:] - target.detach().numpy()), axis=1)
 
 			quality += np.mean(off)
 
 			if show > 0 and(i+1)% (int(len(y_val)/show)) == 0:
-				plotshow = X.detach().numpy()
+				plotshow = out.detach().numpy()
 				if len(plottarget.shape) == 1:
 					plottarget = plottarget.unsqueeze(1)
 				if len(plotshow.shape) == 1:
 					plotshow = plotshow.unsqueeze(1)
 
 				shp = plotshow.shape[1]
-				fig, axs = plt.subplots(1,2*shp, figsize=(4*shp,2), sharey=True, constrained_layout=True)
+				fig, axs = plt.subplots(1,shp, figsize=(2*shp,2), sharey=True, constrained_layout=True)
 				for j in range(shp):
-					axs[j*shp+0].scatter(poss[:,0], poss[:,1], c=plotshow[:,j], s = 5.)
-					axs[j*shp+1].scatter(poss[:,0], poss[:,1], c=plottarget[:,j], s = 5.)
+					axs[j].scatter(poss[:,0], poss[:,1], c=plotshow[:,j], s = 5.)
+					# axs[j*shp+1].scatter(poss[:,0], poss[:,1], c=plottarget[:,j], s = 5.)
 				plt.show()
 			# X = torch.tensor(out, dtype=torch.float32).squeeze(1)
 
