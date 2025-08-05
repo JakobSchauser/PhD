@@ -189,7 +189,6 @@ class Environment():
 
 
 	def call_own_model_and_return_messages(self, X, edges, edge_weights, border_mask):
-		
 		output = self.call_model(self.model, X, edges, edge_weights, border_mask)
 
 		msgs = self.model.saved_messages
@@ -238,7 +237,9 @@ class Environment():
 
 				n_steps = len(yy) - 1
 
-				X = torch.zeros_like(yy[0])
+				# X = torch.zeros_like(yy[0])
+				N_cells = yy[0].shape[0]
+				X = torch.zeros((N_cells, 4), dtype=torch.float32)
 
 				for i in range(n_steps):
 					# start_X = X.detach().clone()  # save the initial state of X
@@ -254,7 +255,7 @@ class Environment():
 					for j in range(self.steps_per_data_point):
 						out = self.call_own_model(X, edges, edge_weights, border_mask)
 						if j != self.steps_per_data_point - 1:
-							X = X.clone() + out.detach()[:,:2]
+							X = X.clone() + out.detach()
 							X.retain_grad()
 
 					# loss += self.loss_addition_sparse_gradient_regularization(X, out)  # add the sparse gradient regularization
@@ -311,7 +312,9 @@ class Environment():
 		edges = self.edges[yi]
 		edge_weights = self.edge_weights[yi]
 		border = self.border_mask[yi]
-		X = torch.zeros_like(y_test[0])
+		# X = torch.zeros_like(y_test[0])
+		N_cells = y_test[0].shape[0]
+		X = torch.zeros((N_cells, 4), dtype=torch.float32)
 
 		self.model.eval()
 
@@ -320,7 +323,7 @@ class Environment():
 		for i in range(N_steps):
 			for j in range(self.steps_per_data_point):
 				out = self.call_own_model(X, edges, edge_weights, border)
-				X = X.clone() + out.detach()[:,:2]
+				X = X.clone() + out.detach()#[:,:2]
 
 			target = y_test[(i+1)]
 
@@ -349,7 +352,10 @@ class Environment():
 		edge_weights = self.edge_weights[data_i]
 		border_mask = self.border_mask[data_i]
 
-		X = torch.zeros_like(y_val[0], dtype=torch.float32)
+		# X = torch.zeros_like(y_val[0], dtype=torch.float32)
+		N_cells = y_val[0].shape[0]
+		X = torch.zeros((N_cells, 4), dtype=torch.float32)
+
 
 		quality = 0.
 		for i in range(int(len(y_val)-1)):
@@ -361,8 +367,7 @@ class Environment():
 					X = out.detach() 
 				else:
 					# if we are guessing the change, we add the output to the previous output
-					X = out.detach()[:,:2] + X
-					
+					X = X + out.detach()#[:,:2] + X
 
 			target = y_val[(i+1)]
 			plottarget = y_val[(i+1)]
