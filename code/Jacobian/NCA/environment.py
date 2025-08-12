@@ -361,7 +361,7 @@ class Environment():
 		for i in range(int(len(y_val)-1)):
 
 			for j in range(self.steps_per_data_point):
-				out = self.call_own_model(X, edges, edge_weights, border_mask)
+				out, messages = self.call_own_model_and_return_messages(X, edges, edge_weights, border_mask)
 				if not guess_change:
 					# if we are not guessing the change, we just take the output
 					X = out.detach() 
@@ -391,7 +391,7 @@ class Environment():
 				plt.show()
 			# X = torch.tensor(out, dtype=torch.float32).squeeze(1)
 
-		return quality
+		return quality, out.detach(), X, messages
 	
 	def get_message(self, X, edges, edge_weights):
 		msg = self.model.get_message(
