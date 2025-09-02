@@ -1,0 +1,14 @@
+{
+  "claimed_attendance": 600,
+  "detection_method": "HOG + SVM people detection",
+  "detected_people": null,
+  "analysis_notes": [
+    "Conference rooms typically seat 0.5-1m\u00b2 per person",
+    "Standing room increases density to 0.25-0.5m\u00b2 per person",
+    "Visual inspection needed for accurate count",
+    "Camera angle and distance affect detection accuracy"
+  ],
+  "verification_approach": "Computer vision people detection + density analysis",
+  "timestamp": "2025-08-29T11:24:39.804058",
+  "verdict": "\ud83d\udcca Requires actual image analysis with computer vision tools"
+}

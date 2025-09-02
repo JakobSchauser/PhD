@@ -1,0 +1,269 @@
+{
+  "total_headlines": 50,
+  "headlines_analyzed": [
+    {
+      "headline": "OpenAI's GPT-4 shows remarkable progress in scientific reasoning",
+      "category": "Technology/AI",
+      "confidence": 0.5
+    },
+    {
+      "headline": "Microsoft announces AI-powered coding assistant for developers",
+      "category": "Technology/AI",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Google's quantum computer demonstrates computational supremacy",
+      "category": "Technology/AI",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Apple integrates machine learning across mobile ecosystem",
+      "category": "Education",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Tesla's neural networks achieve autonomous driving milestone",
+      "category": "Technology/AI",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Congress debates comprehensive AI regulation framework",
+      "category": "Politics/Policy",
+      "confidence": 0.6666666666666666
+    },
+    {
+      "headline": "International trade agreements address digital commerce",
+      "category": "Technology/AI",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Climate policy negotiations reach critical phase",
+      "category": "Politics/Policy",
+      "confidence": 0.3333333333333333
+    },
+    {
+      "headline": "Election security measures implemented nationwide",
+      "category": "Politics/Policy",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Diplomatic talks focus on technology transfer agreements",
+      "category": "Technology/AI",
+      "confidence": 0.5
+    },
+    {
+      "headline": "CRISPR gene therapy shows promise in clinical trials",
+      "category": "Health/Medicine",
+      "confidence": 1.0
+    },
+    {
+      "headline": "WHO updates global health emergency protocols",
+      "category": "Health/Medicine",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Personalized medicine approaches cancer treatment",
+      "category": "Health/Medicine",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Mental health apps demonstrate clinical effectiveness",
+      "category": "Health/Medicine",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Vaccine development accelerated by AI platforms",
+      "category": "Technology/AI",
+      "confidence": 0.5
+    },
+    {
+      "headline": "James Webb telescope reveals early universe structures",
+      "category": "Science/Research",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Fusion reactor achieves net energy gain breakthrough",
+      "category": "Science/Research",
+      "confidence": 0.6666666666666666
+    },
+    {
+      "headline": "Climate models predict accelerating ice sheet loss",
+      "category": "Science/Research",
+      "confidence": 0.5
+    },
+    {
+      "headline": "Archaeologists discover ancient urban planning evidence",
+      "category": "Other",
+      "confidence": 0
+    },
+    {
+      "headline": "Marine scientists identify coral reef restoration methods",
+      "category": "Other",
+      "confidence": 0
+    },
+    {
+      "headline": "Renewable energy investments exceed fossil fuel funding",
+      "category": "Business/Economy",
+      "confidence": 0.6666666666666666
+    },
+    {
+      "headline": "Cryptocurrency regulation brings market stability",
+      "category": "Business/Economy",
+      "confidence": 0.6666666666666666
+    },
+    {
+      "headline": "Supply chain automation reduces global shipping costs",
+      "category": "Technology/AI",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Small business digital transformation accelerates",
+      "category": "Technology/AI",
+      "confidence": 0.5
+    },
+    {
+      "headline": "Tech valuations adjust to economic realities",
+      "category": "Technology/AI",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Olympic venues showcase sustainable architecture",
+      "category": "Technology/AI",
+      "confidence": 0.3333333333333333
+    },
+    {
+      "headline": "Sports analytics revolutionize player performance",
+      "category": "Sports/Recreation",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Youth programs receive unprecedented funding",
+      "category": "Business/Economy",
+      "confidence": 1.0
+    },
+    {
+      "headline": "International leagues expand global reach",
+      "category": "Sports/Recreation",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Athlete safety protocols enhanced by technology",
+      "category": "Technology/AI",
+      "confidence": 0.5
+    },
+    {
+      "headline": "Carbon capture technology reaches commercial scale",
+      "category": "Technology/AI",
+      "confidence": 0.5
+    },
+    {
+      "headline": "Biodiversity conservation efforts show measurable impact",
+      "category": "Environment",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Renewable energy grid achieves stability milestone",
+      "category": "Environment",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Ocean cleanup projects remove significant plastic waste",
+      "category": "Other",
+      "confidence": 0
+    },
+    {
+      "headline": "Reforestation initiatives use satellite monitoring",
+      "category": "Other",
+      "confidence": 0
+    },
+    {
+      "headline": "Streaming platforms invest in interactive content",
+      "category": "Entertainment",
+      "confidence": 1.0
+    },
+    {
+      "headline": "AI-generated music challenges traditional composition",
+      "category": "Technology/AI",
+      "confidence": 0.5
+    },
+    {
+      "headline": "Virtual reality concerts attract global audiences",
+      "category": "Entertainment",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Film industry adopts sustainable production methods",
+      "category": "Technology/AI",
+      "confidence": 0.3333333333333333
+    },
+    {
+      "headline": "Gaming technologies enhance educational experiences",
+      "category": "Technology/AI",
+      "confidence": 0.3333333333333333
+    },
+    {
+      "headline": "Digital currencies pilot in major economies",
+      "category": "Technology/AI",
+      "confidence": 1.0
+    },
+    {
+      "headline": "Remote work policies reshape urban development",
+      "category": "Other",
+      "confidence": 0
+    },
+    {
+      "headline": "Automation balances productivity with employment",
+      "category": "Other",
+      "confidence": 0
+    },
+    {
+      "headline": "Green bonds finance sustainable infrastructure",
+      "category": "Technology/AI",
+      "confidence": 0.5
+    },
+    {
+      "headline": "Economic indicators reflect technological disruption",
+      "category": "Technology/AI",
+      "confidence": 1.0
+    },
+    {
+      "headline": "AI tutoring systems personalize student learning",
+      "category": "Education",
+      "confidence": 0.8
+    },
+    {
+      "headline": "Online education platforms reach underserved regions",
+      "category": "Education",
+      "confidence": 1.0
+    },
+    {
+      "headline": "STEM programs emphasize practical application",
+      "category": "Education",
+      "confidence": 1.0
+    },
+    {
+      "headline": "University research partnerships drive innovation",
+      "category": "Science/Research",
+      "confidence": 0.5
+    },
+    {
+      "headline": "Digital literacy becomes universal requirement",
+      "category": "Technology/AI",
+      "confidence": 0.5
+    }
+  ],
+  "category_distribution": {
+    "Technology/AI": 20,
+    "Education": 4,
+    "Politics/Policy": 3,
+    "Health/Medicine": 4,
+    "Science/Research": 4,
+    "Other": 6,
+    "Business/Economy": 3,
+    "Sports/Recreation": 2,
+    "Environment": 2,
+    "Entertainment": 2
+  },
+  "clustering_method": "Multi-keyword classification with confidence scoring",
+  "timestamp": "2025-08-29T11:25:12.617933"
+}

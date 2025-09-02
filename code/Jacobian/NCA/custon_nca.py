@@ -159,7 +159,7 @@ class CustomGraphConv(MessagePassing):
 
 		msg = self.propagate(edge_index, x=x, edge_weight=edge_weight,
 							 size=size)
-		
+		print("Message shape before split:", msg.shape)
 		msgs = [m.squeeze(1) for m in msg.split(1, dim=1)]  # Split messages by node
 		# print(msgs[0].shape, len(msgs))
 		

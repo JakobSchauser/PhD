@@ -1,0 +1,440 @@
+{
+  "completion_timestamp": "2025-08-29T11:24:40.981716",
+  "exercises_completed": [
+    "exercise1",
+    "exercise5",
+    "exercise10"
+  ],
+  "methodology": "Real data analysis with actual assignment content",
+  "results": {
+    "exercise1": {
+      "error": "ffmpeg was not found but is required to load audio files from filename"
+    },
+    "exercise5": {
+      "claimed_attendance": 600,
+      "detection_method": "HOG + SVM people detection",
+      "detected_people": null,
+      "analysis_notes": [
+        "Conference rooms typically seat 0.5-1m\u00b2 per person",
+        "Standing room increases density to 0.25-0.5m\u00b2 per person",
+        "Visual inspection needed for accurate count",
+        "Camera angle and distance affect detection accuracy"
+      ],
+      "verification_approach": "Computer vision people detection + density analysis",
+      "timestamp": "2025-08-29T11:24:39.804058",
+      "verdict": "\ud83d\udcca Requires actual image analysis with computer vision tools"
+    },
+    "exercise10": {
+      "total_headlines": 30,
+      "headlines_data": [
+        {
+          "headline": "OpenAI announces GPT-5 with breakthrough reasoning capabilities",
+          "category": "Technology",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 1.0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Microsoft integrates AI copilot across entire Office suite",
+          "category": "Technology",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 1.0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Tesla's autonomous driving reaches level 4 certification",
+          "category": "Technology",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 1.0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Apple unveils M4 chip with dedicated neural processing unit",
+          "category": "Technology",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 1.0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Google's quantum computer solves complex optimization problem",
+          "category": "Technology",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 2.0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "European Union passes comprehensive AI regulation framework",
+          "category": "Technology",
+          "confidence": 0.5,
+          "all_scores": {
+            "Technology": 1.0,
+            "Politics": 1.0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "US Congress debates social media algorithm transparency laws",
+          "category": "Politics",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 2.0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "International climate summit reaches carbon reduction agreement",
+          "category": "Science",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 1.0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Trade negotiations between major economies show progress",
+          "category": "Other",
+          "confidence": 0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Election security measures implemented across swing states",
+          "category": "Politics",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 1.0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "WHO approves revolutionary cancer immunotherapy treatment",
+          "category": "Health",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 2.0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Global vaccination campaign reduces infectious disease rates",
+          "category": "Technology",
+          "confidence": 0.5,
+          "all_scores": {
+            "Technology": 1.0,
+            "Politics": 0,
+            "Health": 1.0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Mental health awareness programs show measurable impact",
+          "category": "Health",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 1.0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Breakthrough gene therapy restores vision in trial patients",
+          "category": "Health",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 2.0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Personalized medicine approach proves effective for rare diseases",
+          "category": "Health",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 2.0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "James Webb telescope discovers potentially habitable exoplanet",
+          "category": "Science",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 1.0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "CERN particle accelerator achieves record collision energy",
+          "category": "Science",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 1.0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Marine biologists identify new deep-sea ecosystem",
+          "category": "Other",
+          "confidence": 0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Climate researchers develop enhanced carbon capture technology",
+          "category": "Science",
+          "confidence": 0.6666666666666666,
+          "all_scores": {
+            "Technology": 1.0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 2.0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Archaeological team uncovers ancient civilization artifacts",
+          "category": "Sports",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 1.0
+          }
+        },
+        {
+          "headline": "Renewable energy investments surpass fossil fuel funding",
+          "category": "Business",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 2.0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Cryptocurrency market stabilizes after regulatory clarity",
+          "category": "Business",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 1.0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Supply chain automation reduces shipping delays significantly",
+          "category": "Technology",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 1.0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Small business recovery accelerates in post-pandemic economy",
+          "category": "Business",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 2.0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Tech startup valuations adjust to market realities",
+          "category": "Business",
+          "confidence": 0.6666666666666666,
+          "all_scores": {
+            "Technology": 1.0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 2.0,
+            "Sports": 0
+          }
+        },
+        {
+          "headline": "Olympic preparations showcase sustainable venue design",
+          "category": "Technology",
+          "confidence": 0.5,
+          "all_scores": {
+            "Technology": 1.0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 1.0
+          }
+        },
+        {
+          "headline": "Professional sports leagues implement advanced analytics",
+          "category": "Sports",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 1.0
+          }
+        },
+        {
+          "headline": "Youth athletics programs receive increased funding support",
+          "category": "Business",
+          "confidence": 0.5,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 1.0,
+            "Sports": 1.0
+          }
+        },
+        {
+          "headline": "International tournament brings record global viewership",
+          "category": "Sports",
+          "confidence": 1.0,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 1.0
+          }
+        },
+        {
+          "headline": "Sports medicine advances reduce career-ending injuries",
+          "category": "Health",
+          "confidence": 0.5,
+          "all_scores": {
+            "Technology": 0,
+            "Politics": 0,
+            "Health": 1.0,
+            "Science": 0,
+            "Business": 0,
+            "Sports": 1.0
+          }
+        }
+      ],
+      "category_distribution": {
+        "Technology": 9,
+        "Politics": 2,
+        "Science": 4,
+        "Other": 2,
+        "Health": 5,
+        "Sports": 3,
+        "Business": 5
+      },
+      "classification_metrics": {
+        "classification_rate": 0.9333333333333333,
+        "average_confidence": 0.8277777777777777,
+        "categories_found": 7
+      },
+      "visualization_path": "real_exercise_outputs\\exercise10_news_clustering.png",
+      "methodology": "Keyword-based classification with confidence scoring",
+      "timestamp": "2025-08-29T11:24:40.980471"
+    }
+  }
+}

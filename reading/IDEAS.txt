@@ -1,0 +1,11 @@
+IDEAS:
+
+Q-learning (RL) NCA
+
+Learn the P in PINN. Interpret?
+
+Embedding ala Elias
+
+More general NCA for morphogenetic patterning. Interpret how?
+
+Some model for polarized wound healing
