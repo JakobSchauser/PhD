@@ -1,0 +1,82 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\title{FYS2: Spektrallinjeanalyse omkring \SI{5087}{\angstrom}}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Formål}
+Formålet med denne øvelse er at lære at:
+\begin{itemize}
+  \item indlæse et spektrum med tilhørende usikkerheder,
+  \item visualisere data med akse\-labels og en meningsfuld titel,
+  \item bestemme en linjecentroid og linjebredde (FWHM) med to metoder:
+  (i) modeltilpasning med \texttt{curve\_fit} og (ii) en parameter-fri momentmetode,
+  \item estimere usikkerheder på de målte størrelser.
+\end{itemize}
+
+\section*{Data}
+Datafilen indeholder tre kolonner med header:
+\texttt{wavelength}, \texttt{calibrated\_flux}, \texttt{flux\_var}.
+Usikkerheden fås som $\sigma=\sqrt{\texttt{flux\_var}}$.
+Filnavn: \texttt{sdssJ133702+305539\_combined.dat}.
+
+\section*{Opgaver}
+\subsection*{1) Indlæsning og plot}
+\begin{enumerate}
+\item Indlæs filen (f.eks.\ med \texttt{numpy.genfromtxt(..., names=True)}).
+\item Lav et plot af hele spektret med akse\-labels (x: Wavelength [\si{\angstrom}], y: Flux [arb. units]) og en titel.
+\end{enumerate}
+
+\subsection*{2) Modeltilpasning (curve\_fit)}
+\begin{enumerate}
+\item Ekstrahér et vindue omkring linjen ved \SI{5087}{\angstrom} (f.eks.\ $\pm\SI{12}{\angstrom}$).
+\item Antag en model bestående af en Gaussisk linje på en lineær kontinuum: 
+\[ f(\lambda) = A \exp\!\left[-\frac{1}{2}\left(\frac{\lambda-\mu}{\sigma}\right)^2\right] + m \lambda + b. \]
+\item Brug \texttt{scipy.optimize.curve\_fit} med de givne usikkerheder som vægte (\texttt{sigma=...}, \texttt{absolute\_sigma=True}).
+\item Bestem centroid $\mu$ og FWHM $= 2\sqrt{2\ln 2}\,\sigma$ samt deres usikkerheder fra kovariansmatricen.
+\end{enumerate}
+
+\subsection*{3) Parameter-fri metode (momenter)}
+\begin{enumerate}
+\item Estimér og subtrahér kontinuummet i vinduet (f.eks.\ lineær fit på vinduets kanter).
+\item Beregn første moment (centroid) og andet centralmoment (varians) for den kontinuum\-subtraherede linje:
+\[ \mu = \frac{\sum \lambda\, I}{\sum I}, \qquad
+\sigma^2 = \frac{\sum (\lambda-\mu)^2 I}{\sum I}, \]
+hvor $I$ er (ikke-negative) line-fluxværdier efter kontinuum-subtraktion.
+\item Udled FWHM fra $\sigma$ som ovenfor.
+\item Estimér usikkerheder ved bootstrap: træk tilfældig støj fra en normalfordeling med standardafvigelser givet af \texttt{flux\_var} og gentag momentberegningen mange gange (f.eks.\ 300--1000 gange). Brug middelværdi og standardafvigelse af de resulterende fordelinger for $\mu$ og FWHM som estimater.
+\end{enumerate}
+
+\subsection*{4) Rapportér resultater}
+\begin{itemize}
+\item Præsenter $\mu$ og FWHM for begge metoder inkl.\ usikkerheder.
+\item Diskutér evt.\ systematiske forskelle (modelantagelser, kontinuumestimat, vinduesvalg, støj).
+\item Vedlæg et figurpanel med (i) fuldt spektrum og (ii) zoom-vinduet med bedste fit indtegnet.
+\end{itemize}
+
+\section*{Hints og tjekpunkter}
+\begin{itemize}
+\item Startgæt til \texttt{curve\_fit}: maksimum\-position som $\mu$, amplituden som (maks--median), $\sigma$ som en brøkdel af vinduesbredden.
+\item Kontroller at FWHM bliver positiv og at $\sigma$ ikke presses til numeriske grænser; brug evt.\ bounds.
+\item Husk at bootstrap-resultater kan afhænge af vinduesvalg og kontinuum\-model.
+\end{itemize}
+
+\section*{Ekstra (valgfrit)}
+\begin{itemize}
+\item Udvid kontinuum\-modellen (f.eks.\ 2.~grad polynomium) og sammenlign.
+\item Undersøg følsomheden af resultaterne for forskellige vinduesstørrelser.
+\item Hvis linjen er i absorption, tilpas fortegnet i modellen eller arbejd på inverteret flux.
+\end{itemize}
+
+\end{document}
