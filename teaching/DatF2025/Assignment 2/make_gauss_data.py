@@ -18,12 +18,18 @@ counts_total = counts + counts_u
 # plt.bar(bin_u[:-1], counts_total, width=np.diff(bin_u), alpha=0.5, label='Uniform')
 
 
-y = counts_total
+y = counts_total.astype(float)
 yerr = np.sqrt(y)  # Poisson errors
 x = (bin_u[:-1] + bin_u[1:]) / 2 + 16
 
 plt.plot(x, y, 'o', label='Data points')
 plt.show()
 
+
+# add random nans to y and yerr
+nan_indices = np.random.choice(len(y), size=5, replace=False).astype(int)
+y[nan_indices] = np.nan
+yerr[nan_indices] = np.nan
+
 # save data to a text file
-np.savetxt('nice_gaussian.txt', np.column_stack((x, y, yerr)), header='x y yerr')
+np.savetxt('nice_data.txt', np.column_stack((x, y, yerr)), header='x y yerr')
