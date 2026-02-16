@@ -1,0 +1,9 @@
+Planet, x(AU), vy(AU/yr), fact
+Mercury, 0.387, 10.10, Close to the sun
+Venus, 0.723, 7.38, The goddess of love
+Earth, 1.000, 6.28, Has sunrise in the morning
+Mars, 1.524, 5.08, Might have life on it
+Jupiter, 5.203, 2.75, Looks good in the month of June
+Saturn, 9.537, 2.04, Has rings all around it
+Uranus, 19.191, 1.43, No fact available
+Neptune, 30.070, 1.14, Is god of the sea

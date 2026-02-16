@@ -1,0 +1,9 @@
+BedMachine Greenland version 5 20km resolution dataset
+source: Morlighem, M. et al. (2022). IceBridge BedMachine Greenland. (IDBMG4, Version 5). [Data Set]. Boulder, Colorado USA. NASA National Snow and Ice Data Center Distributed Active Archive Center. https://doi.org/10.5067/GMEVBWFLWA7X.
+Variables:
+x: X coordinate (m)
+y: Y coordinate (m)
+thickness: Ice thickness (m)
+surface: Surface elevation (m)
+bed: Bed elevation (m)
+mask: Ice mask (0 = ocean, 1 = ice-free land, 2 = grounded ice, 3 = floating ice, 4 = non-Greenland land)

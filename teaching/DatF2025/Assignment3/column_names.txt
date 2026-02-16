@@ -1,0 +1,24 @@
+sdss_cols = [
+        "source_id",
+        "umag", "e_umag",
+        "gmag", "e_gmag",
+        "rmag", "e_rmag",
+        "imag", "e_imag",
+        "zmag", "e_zmag",
+]
+
+ukidss_cols = [
+        "source_id",
+        "yAperMag3",   "yAperMag3Err",
+        "j_1AperMag3", "j_1AperMag3Err",
+        "hAperMag3",   "hAperMag3Err",
+        "kAperMag3",   "kAperMag3Err",
+]
+
+wise_cols = [
+        "source_id",
+        "W1mag", "e_W1mag",
+        "W2mag", "e_W2mag",
+        "W3mag", "e_W3mag",
+        "W4mag", "e_W4mag",
+]
