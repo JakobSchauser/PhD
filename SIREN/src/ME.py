@@ -142,6 +142,9 @@ class ImageMetrics:
 			[self.normalized_mi(self.pre[k], self.target[k]) for k in range(self.pre.shape[0])]
 		)
 		pair_ssim = np.array([self.ssim_pair(self.pre[k], self.target[k]) for k in range(self.pre.shape[0])])
+		pair_fourier_nmi = np.array(
+			[self.fourier_normalized_mi(self.pre[k], self.target[k]) for k in range(self.pre.shape[0])]
+		)
 
 		pre_pairwise = self.pairwise_mi_matrix(self.pre)
 		tgt_pairwise = self.pairwise_mi_matrix(self.target)
@@ -154,6 +157,8 @@ class ImageMetrics:
 			"pair_ssim": pair_ssim,
 			"mean_pair_nmi": float(pair_nmi.mean()),
 			"mean_pair_ssim": float(pair_ssim.mean()),
+			"pair_fourier_nmi": pair_fourier_nmi,
+			"mean_pair_fourier_nmi": float(pair_fourier_nmi.mean()),
 			"pre_entropy_mean": float(np.mean([self.entropy(x) for x in self.pre])),
 			"target_entropy_mean": float(np.mean([self.entropy(x) for x in self.target])),
 			"pre_pairwise_nmi": pre_pairwise,
