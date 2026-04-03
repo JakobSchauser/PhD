@@ -8,7 +8,7 @@ from skimage.transform import resize
 from src.ME import ImageMetrics
 from src.gregor import gregor_stage_comparison
 from src.nonlinear_probe import nonlinear_probe_image_decodability
-from src.process_images import load_image_set_from_dir, load_rgb
+from src.process_images import load_image_set_from_dir, load_pre_target_from_individual_dir, load_rgb
 from src.probe import probe_image_decodability
 
 
@@ -41,7 +41,11 @@ def load_levels(base_dir, target_dir=None):
 		raise ValueError(f"No level folders found in {base_dir}")
 
 	# Use the first level to define canonical target stack shape.
-	pre_ref = load_image_set_from_dir(level_dirs[0], glob_pattern="siren-examples_best_*.png")
+	pre_ref, final_ref = load_pre_target_from_individual_dir(
+		level_dirs[0],
+		pre_prefix="siren-examples_best_",
+		target_prefix="examples_best_",
+	)
 	target_h, target_w = pre_ref.shape[1:3]
 
 	target_paths = sorted(target_dir.glob("*.png"), key=lambda p: p.name)
@@ -51,6 +55,11 @@ def load_levels(base_dir, target_dir=None):
 		raise ValueError(
 			f"Mismatched number of images between {target_dir} and {level_dirs[0]}: "
 			f"target={len(target_paths)}, pre={pre_ref.shape[0]}"
+		)
+	if final_ref.shape[0] != pre_ref.shape[0]:
+		raise ValueError(
+			f"Mismatched number of pre/final images in {level_dirs[0]}: "
+			f"pre={pre_ref.shape[0]}, final={final_ref.shape[0]}"
 		)
 
 	target_imgs = []
@@ -63,18 +72,32 @@ def load_levels(base_dir, target_dir=None):
 
 	level_sets = {}
 	for level_dir in level_dirs:
-		pre = load_image_set_from_dir(level_dir, glob_pattern="siren-examples_best_*.png")
+		pre, final = load_pre_target_from_individual_dir(
+			level_dir,
+			pre_prefix="siren-examples_best_",
+			target_prefix="examples_best_",
+		)
 		if pre.shape[0] != target.shape[0]:
 			raise ValueError(
 				f"Mismatched number of images between {level_dir} and {target_dir}: "
 				f"pre={pre.shape[0]}, target={target.shape[0]}"
+			)
+		if final.shape[0] != target.shape[0]:
+			raise ValueError(
+				f"Mismatched number of images between {level_dir} and {target_dir}: "
+				f"final={final.shape[0]}, target={target.shape[0]}"
 			)
 		if pre.shape[1:] != target.shape[1:]:
 			raise ValueError(
 				f"Mismatched image shapes between {level_dir} and {target_dir}: "
 				f"pre={pre.shape[1:]}, target={target.shape[1:]}"
 			)
-		level_sets[level_dir.name] = {"pre": pre, "target": target}
+		if final.shape[1:] != target.shape[1:]:
+			raise ValueError(
+				f"Mismatched image shapes between {level_dir} and {target_dir}: "
+				f"final={final.shape[1:]}, target={target.shape[1:]}"
+			)
+		level_sets[level_dir.name] = {"pre": pre, "final": final, "target": target}
 	return level_sets
 
 
@@ -110,6 +133,7 @@ def compute_level_results(
 
 	for level_name in level_names:
 		pre = level_sets[level_name]["pre"]
+		final = level_sets[level_name]["final"]
 		target = level_sets[level_name]["target"]
 
 		metrics = ImageMetrics(pre, target, bins=bins)
@@ -127,8 +151,24 @@ def compute_level_results(
 
 		pre_internal_ssim = _pairwise_ssim_values(pre)
 
+		final_metrics = ImageMetrics(final, target, bins=bins)
+		final_cross = final_metrics.cross_stage_metrics()
+		final_gregor = gregor_stage_comparison(final, target, rgb_bins=32)
+		final_probe = probe_image_decodability(final, target, alpha=probe_alpha, add_coords=False)
+		final_nonlinear_probe = nonlinear_probe_image_decodability(
+			final,
+			target,
+			alpha=nonlinear_probe_alpha,
+			add_coords=False,
+			n_features=nonlinear_probe_features,
+			gamma=nonlinear_probe_gamma,
+		)
+
+		final_internal_ssim = _pairwise_ssim_values(final)
+
 		results["levels"][level_name] = {
 			"pre": pre,
+			"final": final,
 			"target": target,
 			"cross": cross,
 			"pre_internal_ssim_values": pre_internal_ssim,
@@ -136,6 +176,12 @@ def compute_level_results(
 			"gregor": gregor,
 			"probe": probe,
 			"nonlinear_probe": nonlinear_probe,
+			"final_cross": final_cross,
+			"final_internal_ssim_values": final_internal_ssim,
+			"final_internal_ssim_mean": float(final_internal_ssim.mean()),
+			"final_gregor": final_gregor,
+			"final_probe": final_probe,
+			"final_nonlinear_probe": final_nonlinear_probe,
 		}
 
 	return results
